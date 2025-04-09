@@ -1,0 +1,106 @@
+spring boot project with jar file :
+
+create two virtual machines 
+in first vm                                                                                       in second vm :
+download  - git , java , maven / gradel  , docker                                                 just install docker and try to run the image which os pushed as a part of ci processs
+and push the image to dockerhub
+
+
+CI PROCESS :
+
+1 . checkout the code
+2 . build the code
+3 . write the docker image
+4 . build the docker image
+5 . push the docker images ( make sure we login to dockerhub before pushing)
+
+build tool and docker file will change
+
+- yum install git docker
+- git clone 
+- cd spring-boot-maven-project
+- vi pom.xml     ( check java version and update )
+- yum install -y java-21-amazon-corretto
+- cd /opt
+- wget maven download
+- tar xvf maven.90
+- export PATH=$PATH:/opt/apachemaven-9.0/bin
+- cd /root/springboot-maven-course-micro-svc/
+- mvn clean package
+- service docker start
+if we want to run java -jar jarfile name we need java from docker for that we need use 
+
+- docker pull openjdk:21
+When we build a maven project or jar file or war file will be located under target directory
+we need to copy this jar file from local file system into the docker image
+for that we have to use a instruction COPY SRC DEST
+- vi Dockerfile 
+add this
+FROM openjdk:21
+COPY springboot-maven-course-micro-svc-0.0.1-SNAPSHOT.jar app.jar                  ( ll target ) will get jar file ------ not sure about the version of jar file the use . ( COPY springboot-maven-course-micro-svc-*.jar )
+ENTRYPOINT ["java" , "-jar" , "/app.jar" ]
+                                                                                   here from will be equivalent to docker pull , copy will be equivalent to docker cp 
+- docker image build -t aishwaryakm1106/springboot-maven-docker-project:D1 .
+                     dockerhub username        reop name              tag and . always looks for docker file               
+now we have to push this image to docker hub , before that we have to login in to docker hub
+- docker login
+- docker image push aishwaryakm1106/springboot-maven-docker-project:v1
+
+
+CD PROCESS :
+
+- sudo hostnamectl set-hostname docker-cd
+- sudo -i
+- yum install docker
+- service docker start
+
+step 1:
+if the repo is public we can download the image without logging into docker hub
+if the repo is private we have to login to docker hub and download the image
+
+- docker image pull aishwaryakm1106/springboot-maven-docker-project:v1
+
+
+now we have a image then we have to run a container
+- docker container run --name=springboot-maven-docker-container -p 8888:8080 --detach aishwaryakm1106/springboot-maven-docker-project:v1
+                                container name              -p= port                        image                             ( my actula container is running on 8080 i want to forward it to 8888) --deatch= i want to run this cintainer in background
+- docker ps -a {checks the containers}
+
+http://3.111.58.212:8888/course-svc/getAllAwsServices
+
+do same process wuth gradle project 
+
+
+replace dockerhub with ecr
+
+1  create a repo in ecr
+2  login to ecr
+3  build docker image ot tag the already existing image with ecr repo
+4  push the image to ecr
+
+
+ec2 is dii=ffernet and ecr is different
+we need iam role or iam user  to connect ecr from ec2
+to create a iam user or role we need permission , the permission or policy will be
+ec2containerregistryfullaccess
+
+create arole - give permission - give iam role for both the instances - security- modify iam role - select- save 
+- sudo -i
+- aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 211125521407.dkr.ecr.ap-south-1.amazonaws.com    (this will get from -view push commands)
+- docker image build -t 211125521407.dkr.ecr.ap-south-1.amazonaws.com/springboot-maven-docker-project:v1 .
+- docker image push 211125521407.dkr.ecr.ap-south-1.amazonaws.com/springboot-maven-docker-project:v1
+if the ecr is private we have to login first 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
