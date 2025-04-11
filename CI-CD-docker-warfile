@@ -1,0 +1,95 @@
+springboot project with war file
+in order to run war files we want tomcat
+
+first will go with manual process
+------------------------------------------------------manual project-----------------------------------------------------------------------
+
+1. download apache tomcat image and run the container
+2. connect to the tomcat container
+3. i will download war file
+4. we will access application from browser
+
+- yum install docker -y
+- service docker start
+- docker pull tomcat:9.0.85
+- docker images
+- docker container run --name=tomcat9 -p 8080:8080 -d tomcat:9.0.85
+- docker container ps
+now the tomcat conatiner is up and running , if we want to access application then we have to deploy the war file
+means we have to browse to webapps directory and we have too keep war filw under that
+
+connect to the tomcat contaoner make sure war file is there umder webapps directory
+default war file name is ROOT.war or u can use your own war file name as well
+ to connect container we need id or name
+- docker exec -it name/id(tomcat9) bash
+
+directory we need to keep war file in tomcat is webapps
+- cd webapps
+- wget https://tomcat.apache.org/tomcat-9.0-doc/appdev/sample/sample.war    ( in google sample war file for tomcat)
+ in browser 
+serverip:8080/sample              ( because or war file name is sample check by using the command -ll )
+to change name of war file 
+- mv sample.war ROOT.war
+now directly it will come      serverip:8080
+
+------------------------------------------------ manual process -------------------------------------------------------
+
+
+|------------------------------------------------------  |
+| how will u connect to linux machine using command line |
+| - ssh -i keypair.pem username@serverip                 |
+|                                                        |
+| how to connect to docker container                     |
+| - docker exec -ip containername/containerid bash       |
+-----------------------------------------------------    |
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+will take a sprong boot project which will have war file and  we will replicate this one
+
+- yum install git sudo yum install java-17-amazon-corretto -y and download javac
+- wget https://services.gradle.org/distributions/gradle-8.13-all.zip
+- unzip gradle-8.13-all.zip
+- export PATH=$PATH:/opt/gradle-8.13/bin
+- git clone https://github.com/AishwaryaK515/spring-boot-gradle-tomcat-project.git
+- cd spring-boot-gradle-tomcat-project
+- gradle clean build                                 ( this will give us a war file )
+- ll build/libs/                ( this will show the jar file but we want war file for that 
+- vi build.gradle          add " id 'war' "                optional
+
+we havr to write a docker file for all those which we did in manual process
+step 1  we need tomcat image tp place war file
+step 2  we need to copy war file from build/libs/ to tomcat webapps folder
+- vi Dockerfile
+---
+  FROM openjdk:17-jdk-alpine
+VOLUME /tmp
+ARG WAR_FILE=build/libs/app.war
+COPY ${WAR_FILE} app.war
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/app.war"]
+----
+
+build dockerfile
+- docker image build -t aishwaryakm1106/spring-boot-gradle-tomcat-project:v1 .        new method -----  docker build -t springboot-gradle-tomcat .
+
+run the image'
+- docker run --name spring-boot-gradle-tomcat-project-v2 -p 9090:8080 -d aishwaryakm1106/spring-boot-gradle-tomcat-project:v1          new method  -----  docker run --rm -p 8080:8080 springboot-gradle-tomcat
+
+                                  any name                                             repo shown in docker images
+serverip:8080           its done
+  
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+do with maven project as well 
+
+
+
+
+
+
+
+
+
+
