@@ -1,0 +1,27 @@
+Dcokerise Dotnet Project
+Dockerise Python Application
+Dockerise Nodejs Application
+
+HOW TO CREATE A DOTNET PROJECT AND RUN THE APPLICATION MANUALLY
+later will crate docker file for that prject and build the docker image and run the container 
+
+1.installl dotnte core on amazon linux
+2.create a dotnet core project
+3.build the dotnet core project
+4.run the dotnet core project
+
+
+1.  .NET Installation on Amazon Linux 2
+Add the Microsoft repository
+- sudo rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
+Install required tools and update
+- sudo dnf update -y
+- sudo dnf install -y dotnet-sdk-7.0
+
+
+
+
+
+
+
+
